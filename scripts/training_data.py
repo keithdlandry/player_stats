@@ -4,11 +4,11 @@ import pandas as pd
 import numpy as np
 import read_player_stats
 
-def make_total_data(seasons=range(2004,2015),pages=[0,1]):
+def make_total_data(seasons=range(2004,2015),pages=[0,1], pos='rb'):
 	total_df = None
 	for season in seasons:
 		for page in pages:
-			df = read_player_stats.rb_stats(season,page)
+			df = read_player_stats.season_stats(season,page=page,pos=pos)
 			if total_df is None:
 				total_df = df
 			else:
