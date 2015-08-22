@@ -3,6 +3,8 @@
 import pandas as pd
 import numpy as np
 import read_player_stats
+from sklearn import linear_model
+from sklearn import grid_search
 
 def make_total_data(seasons=range(2004,2015),pages=[0,1], pos='rb'):
 	total_df = None
@@ -41,3 +43,27 @@ def make_training_df(total_df, seasons=range(2004,2014), ppg=False):
 		
 	training_data_nadropped = training_data_df.dropna() #dont train on missing seasons
 	return training_data_nadropped
+
+def data_for_projection(total_df, season=2015):
+	most_rec_df = merge_seasons(total_df[total_df.Season == season-2], total_df[total_df.Season == season-1])
+	most_rec_df.dropna(inplace=True)
+	return most_rec_df
+
+def ff_projection(most_rec_df, model):
+	#project based on most recent data
+	X_proj = np.array(most_rec_df.drop('Name', axis=1))
+	y_proj = model.predict(X_proj)
+
+	#player names and newest projections sorted descending
+	most_rec_df['2015 Projection'] = y_proj
+	return most_rec_df[['Name', '2015 Projection']].sort(columns='2015 Projection', ascending=False)
+
+def train_player_model(training_df):
+	X_train = np.array(training_df.drop(['Name','FFPPG'], axis=1))
+	y_train = np.array(training_df['FFPPG'])
+
+	parameters = {'alpha': np.logspace(-5,5,num=30)}
+	lin_model = grid_search.GridSearchCV(linear_model.Ridge(normalize=True), parameters, cv=10)
+	lin_model.fit(X_train, y_train)
+
+	return lin_model.best_estimator_
