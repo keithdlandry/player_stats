@@ -56,7 +56,9 @@ def ff_projection(most_rec_df, model):
 
 	#player names and newest projections sorted descending
 	most_rec_df['2015 Projection'] = y_proj
-	return most_rec_df[['Name', '2015 Projection']].sort(columns='2015 Projection', ascending=False)
+	most_rec_df = most_rec_df[['Name', '2015 Projection']].sort(columns='2015 Projection', ascending=False)
+	most_rec_df.index = range(1, len(most_rec_df)+1)
+	return most_rec_df
 
 def train_player_model(training_df):
 	X_train = np.array(training_df.drop(['Name','FFPPG'], axis=1))
