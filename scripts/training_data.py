@@ -10,13 +10,27 @@ def make_total_data(seasons=range(2004,2015),pages=[0,1], pos='rb'):
 	total_df = None
 	for season in seasons:
 		for page in pages:
-			df = read_player_stats.season_stats(season,page=page,pos=pos)
+			df = read_player_stats.read_stats(season, week=0,page=page,pos=pos)
 			if total_df is None:
 				total_df = df
 			else:
 				total_df = total_df.append(df, ignore_index = True)
 			
 	total_df.sort_index(by=['Name','Season'], inplace=True)
+	return total_df
+
+def make_total_game_data(seasons=range(2004,2015), weeks=range(1,18),pages=[0,1], pos='rb'):
+	total_df = None
+	for season in seasons:
+		for week in weeks:
+			for page in pages:
+				df = read_player_stats.read_stats(season, week=week,page=page,pos=pos)
+				if total_df is None:
+					total_df = df
+				else:
+					total_df = total_df.append(df, ignore_index = True)
+
+	total_df.sort_index(by=['Name','Season', 'Week'], inplace=True)
 	return total_df
 
 def merge_seasons(df_season1, df_season2):
