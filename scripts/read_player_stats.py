@@ -5,7 +5,7 @@ from urllib2 import urlopen
 import re
 
 #function for parsing
-def read_stats(season, week=0, page=0, pos='rb'):
+def read_stats(season, week=0, page=0, pos='rb', scoring='PPR'):
     
     posid_dict = {'qb': 10, 'rb': 20, 'wr': 30, 'te': 40}
     posid = posid_dict[pos]
@@ -18,8 +18,10 @@ def read_stats(season, week=0, page=0, pos='rb'):
     
     column_dict = {'qb': qb_column_names, 'rb': rb_column_names, 'wr': wr_column_names, 'te': te_column_names}
     column_names = column_dict[pos]
-    
-    url_str = 'http://fftoday.com/stats/playerstats.php?Season=%d&GameWeek=%d&PosID=%d&LeagueID=1&order_by=FFPts&sort_order=DESC&cur_page=%d' % (season, week, posid, page)
+    league_dict = {'PPR': 107644, 'NOPPR': 1}
+    league_id = league_dict[scoring]
+
+    url_str = 'http://fftoday.com/stats/playerstats.php?Season=%d&GameWeek=%d&PosID=%d&LeagueID=%d&order_by=FFPts&sort_order=DESC&cur_page=%d' % (season, week, posid, league_id, page)
     
     #parse html and find the main data table
     parsed = parse(urlopen(url_str))

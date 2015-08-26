@@ -10,7 +10,7 @@ def make_total_data(seasons=range(2004,2015),pages=[0,1], pos='rb'):
 	total_df = None
 	for season in seasons:
 		for page in pages:
-			df = read_player_stats.read_stats(season, week=0,page=page,pos=pos)
+			df = read_player_stats.read_stats(season, week=0,page=page,pos=pos, scoring='PPR')
 			if total_df is None:
 				total_df = df
 			else:
@@ -24,7 +24,7 @@ def make_total_game_data(seasons=range(2004,2015), weeks=range(1,18),pages=[0,1]
 	for season in seasons:
 		for week in weeks:
 			for page in pages:
-				df = read_player_stats.read_stats(season, week=week,page=page,pos=pos)
+				df = read_player_stats.read_stats(season, week=week,page=page,pos=pos, scoring='PPR')
 				if total_df is None:
 					total_df = df
 				else:
