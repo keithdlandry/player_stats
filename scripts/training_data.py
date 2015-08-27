@@ -5,6 +5,8 @@ import numpy as np
 import read_player_stats
 from sklearn import linear_model
 from sklearn import grid_search
+from sklearn import preprocessing
+from sklearn import cluster
 
 def make_total_data(seasons=range(2004,2015),pages=[0,1], pos='rb'):
 	total_df = None
@@ -73,6 +75,25 @@ def ff_projection(most_rec_df, model):
 	most_rec_df = most_rec_df[['Name', '2015 Projection']].sort(columns='2015 Projection', ascending=False)
 	most_rec_df.index = range(1, len(most_rec_df)+1)
 	return most_rec_df
+
+def cluster_players(df, n_clusters=3):
+	X_Cluster = np.array(df.drop(['Name', 'FFPPG'], axis=1))
+	X_Cluster = preprocessing.scale(X_Cluster)
+
+	kmean_model = cluster.KMeans(n_clusters=n_clusters)
+	y_clusters = kmean_model.fit_predict(X_Cluster)
+
+	df['Cluster'] = y_clusters
+
+	group_df = [df[df.Cluster == clust] for clust in range(n_clusters)]
+
+	for i, group_element in enumerate(group_df):
+		group_element['FFPPG'].hist(bins=50)
+		print('Group ' + str(i))
+		print('mean: ' + str(np.mean(group_element['FFPPG'])))
+		print('std: ' + str(np.std(group_element['FFPPG'])))
+
+	return group_df
 
 def train_player_model(training_df):
 	X_train = np.array(training_df.drop(['Name','FFPPG'], axis=1))
