@@ -93,7 +93,7 @@ def cluster_players(df, n_clusters=3):
 		print('mean: ' + str(np.mean(group_element['FFPPG'])))
 		print('std: ' + str(np.std(group_element['FFPPG'])))
 
-	return group_df
+	return group_df, kmean_model
 
 def train_player_model(training_df):
 	X_train = np.array(training_df.drop(['Name','FFPPG'], axis=1))
