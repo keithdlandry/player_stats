@@ -74,11 +74,12 @@ def ff_projection(most_rec_df, model, normalize=False):
 		X_proj = preprocessing.scale(X_proj)
 	y_proj = model.predict(X_proj)
 	
-	#player names and newest projections sorted descending
-	most_rec_df['2015 Projection'] = y_proj
-	most_rec_df = most_rec_df[['Name', '2015 Projection']].sort(columns='2015 Projection', ascending=False)
-	most_rec_df.index = range(1, len(most_rec_df)+1)
-	return most_rec_df
+	return y_proj
+
+def sort_and_reindex(df, col):
+	df = df.sort(columns=col, ascending=False)
+	df.index = range(1, len(df)+1)
+	return df
 
 def cluster_players(df, n_clusters=3):
 	X_Cluster = np.array(df.drop(['Name', 'FFPPG'], axis=1))
