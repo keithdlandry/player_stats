@@ -4,9 +4,11 @@ import pandas as pd
 import numpy as np
 import read_player_stats
 from sklearn import linear_model
+from sklearn import svm
 from sklearn import grid_search
 from sklearn import preprocessing
 from sklearn import cluster
+from sklearn import cross_validation
 
 def make_total_data(seasons=range(2004,2015),pages=[0,1], pos='rb'):
 	total_df = None
@@ -65,11 +67,13 @@ def data_for_projection(total_df, season=2015):
 	most_rec_df.dropna(inplace=True)
 	return most_rec_df
 
-def ff_projection(most_rec_df, model):
+def ff_projection(most_rec_df, model, normalize=False):
 	#project based on most recent data
 	X_proj = np.array(most_rec_df.drop('Name', axis=1))
+	if normalize:
+		X_proj = preprocessing.scale(X_proj)
 	y_proj = model.predict(X_proj)
-
+	
 	#player names and newest projections sorted descending
 	most_rec_df['2015 Projection'] = y_proj
 	most_rec_df = most_rec_df[['Name', '2015 Projection']].sort(columns='2015 Projection', ascending=False)
@@ -104,3 +108,40 @@ def train_player_model(training_df):
 	lin_model.fit(X_train, y_train)
 
 	return lin_model.best_estimator_
+
+def train_svm_model(training_df, verbose=False):
+	#train SVM
+	X_train = np.array(training_df.drop(['Name','FFPPG'], axis=1))
+	y_train = np.array(training_df['FFPPG'])
+
+	X_scaled = preprocessing.scale(X_train)
+
+	best_score = 9999
+	best_params = {}
+
+	#grid search to optimize parameters of SVM
+	C_list = np.logspace(-5,2,num=11)
+	gamma_list = np.logspace(-3,1,num=11)
+	epsilon_list = [.1]
+	for c_test in C_list:
+		for gamma_test in gamma_list:
+			for epsilon_test in epsilon_list:
+				svm_model = svm.SVR(kernel='rbf', C=c_test, gamma=gamma_test, epsilon=epsilon_test)
+				scores = cross_validation.cross_val_score(svm_model, X_scaled, y_train, cv=5, scoring='mean_absolute_error')
+				mean_score = np.mean(scores)
+				if verbose:
+					print('params: ' + str(svm_model.get_params()))
+					print(mean_score)
+				if abs(mean_score) < abs(best_score):
+					best_score = mean_score
+					best_params = svm_model.get_params()
+
+	print('***Best Params***')
+	print(best_params)
+	print('Score:' + str(best_score))
+
+	#return a trained SVM with the best parameters we found
+	ret_svm = svm.SVR()
+	ret_svm.set_params(**best_params)
+	ret_svm.fit(X_scaled, y_train)
+	return ret_svm
