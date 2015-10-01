@@ -23,12 +23,12 @@ def make_total_data(seasons=range(2004,2015),pages=[0,1], pos='rb'):
 	total_df.sort_index(by=['Name','Season'], inplace=True)
 	return total_df
 
-def make_total_game_data(seasons=range(2004,2015), weeks=range(1,18),pages=[0,1], pos='rb'):
+def make_total_game_data(seasons=range(2004,2015), weeks=range(1,18),pages=[0,1], pos='rb', scoring='FD'):
 	total_df = None
 	for season in seasons:
 		for week in weeks:
 			for page in pages:
-				df = read_player_stats.read_stats(season, week=week,page=page,pos=pos, scoring='FD')
+				df = read_player_stats.read_stats(season, week=week,page=page,pos=pos, scoring=scoring)
 				if total_df is None:
 					total_df = df
 				else:
