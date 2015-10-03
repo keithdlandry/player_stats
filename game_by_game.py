@@ -56,7 +56,16 @@ def save_all_stats(season=2015, week=18, scoring='FD'):
     positions = ['qb', 'rb', 'wr', 'te']
     dfs = []
     for pos in positions:
+        print('Reading ' + pos + 's...')
         dfs.append(training_data.make_total_game_data(seasons=range(2004,season+1), weeks=range(1,18), pages=[0,1], pos=pos, scoring=scoring))
+
+    #fix scoring for draftkings leagues +3 for 300 yds pass 100 yds rush/rec
+    if scoring == 'DK':
+        dfs[0].ix[dfs[0].PassYards > 300, 'FFPPG'] += 3
+        dfs[0].ix[dfs[0].RunYards > 100, 'FFPPG'] += 3
+        for df in dfs:
+            df.ix[df.RunYards > 100, 'FFPPG'] += 3
+            df.ix[df.RecYards > 100, 'FFPPG'] += 3
 
     #fix duplicate player names
     dfs[1].loc[(dfs[1].Name == 'AdrianPeterson') & (dfs[1].Team != 'MIN'), 'Name'] = 'AdrianPeterson2'
