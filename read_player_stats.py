@@ -18,7 +18,7 @@ def read_stats(season, week=0, page=0, pos='rb', scoring='PPR'):
     
     column_dict = {'qb': qb_column_names, 'rb': rb_column_names, 'wr': wr_column_names, 'te': te_column_names}
     column_names = column_dict[pos]
-    league_dict = {'FD':174424 ,'PPR': 107644, 'NOPPR': 1}
+    league_dict = {'FD': 174424 , 'DK': 174978, 'PPR': 107644, 'NOPPR': 1}
     league_id = league_dict[scoring]
 
     url_str = 'http://fftoday.com/stats/playerstats.php?Season=%d&GameWeek=%d&PosID=%d&LeagueID=%d&order_by=FFPts&sort_order=DESC&cur_page=%d' % (season, week, posid, league_id, page)

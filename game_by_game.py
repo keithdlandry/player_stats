@@ -7,7 +7,7 @@ def single_player(single_player_df):
     single_player_df.reset_index(drop=True, inplace=True)
     arr = np.array(single_player_df.drop(['Name', 'Team', 'Games', 'Season', 'Week', 'FFPPG'], axis=1))
     tot_games,nfeat = arr.shape    
-    windowlen = 20*nfeat
+    windowlen = 10*nfeat
     flat = arr.flatten()
     
     label = np.array([-1])
@@ -30,14 +30,14 @@ def gbg_train_stats(data_frame):
     #define all weeks relative to this value
 	orig = {'Season': 2004, 'Week': 1}
 
-    #remove players with fewer than 20 games recorded
-	data_frame = data_frame.groupby('Name').filter(lambda x: len(x) > 20)
+    #remove players with fewer than 10 games recorded
+	data_frame = data_frame.groupby('Name').filter(lambda x: len(x) > 10)
 	data_frame['WeekID'] = 17*(data_frame['Season'] - orig['Season']) + (data_frame['Week'] - orig['Week'])
 
     #create column names for new dataframe
 	stats_cols = data_frame.drop(['Name', 'Team', 'Games', 'Season', 'Week','FFPPG'], axis=1).columns
 	game_stats_cols = []
-	for i in range(20):
+	for i in range(10):
 		game_stats_cols = game_stats_cols + [(col + '_' + str(i)) for col in stats_cols]
 
     #make examples for each player
