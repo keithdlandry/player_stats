@@ -41,7 +41,7 @@ def weekly_pred(season=2015, week=4, scoring='FD'):
 	positions = ['QB', 'RB', 'WR', 'TE']
 	pos_salaries = []
 	for pos in positions:
-		pos_salaries.append(pd.read_csv('salaries/by_position/' + pos + '_W' + str(week) + '_2015.csv'))
+		pos_salaries.append(pd.read_csv('salaries/by_position/' + scoring + '/' + pos + '_W' + str(week) + '_2015.csv'))
 
 	week_table = []
 	for proj, sal in zip(proj_list, pos_salaries):
@@ -73,10 +73,25 @@ def FD_salaries(filename, week=1):
 
 	return
 
+def DK_salaries(filename, week=1):
+	salaries = pd.read_csv(filename)
+	salaries['Name'] = salaries['Name'].str.replace('[^a-z]', '',flags=re.IGNORECASE)
+	salaries = salaries[['Name', 'Salary', 'Position']]
+	
+	positions = ['QB', 'RB', 'WR', 'TE']
+	position_salaries = [salaries[salaries.Position == pos] for pos in positions]
+
+	for i,pos in enumerate(positions):
+		print('salaries/by_position/' + pos + '_W' + str(week) + '_2015.csv')
+		position_salaries[i].to_csv('salaries/by_position/DK/' + pos + '_W' + str(week) + '_2015.csv')
+
+	return
+
 if __name__ == '__main__':
 	print('Updating Data...')
-	game_by_game.save_all_stats(season=2015, week=18, scoring='DK')
+	#game_by_game.save_all_stats(season=2015, week=18, scoring='DK')
 	print('Getting Salaries...')
 	#FD_salaries('salaries/FD/FanDuel-NFL-2015-10-04-13139-players-list.csv', week=4)
+	DK_salaries('salaries/DK/DKSalaries.csv', week=4)
 	print('Making Projections...')
-	#weekly_pred(season=2015, week=4, scoring='FD')
+	weekly_pred(season=2015, week=4, scoring='DK')

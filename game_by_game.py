@@ -63,9 +63,10 @@ def save_all_stats(season=2015, week=18, scoring='FD'):
     if scoring == 'DK':
         dfs[0].ix[dfs[0].PassYards > 300, 'FFPPG'] += 3
         dfs[0].ix[dfs[0].RunYards > 100, 'FFPPG'] += 3
-        for df in dfs:
-            df.ix[df.RunYards > 100, 'FFPPG'] += 3
-            df.ix[df.RecYards > 100, 'FFPPG'] += 3
+        dfs[1].ix[dfs[1].RunYards > 100, 'FFPPG'] += 3
+        dfs[2].ix[dfs[2].RunYards > 100, 'FFPPG'] += 3
+        for i in range(1,4):
+            dfs[i].ix[dfs[i].RecYards > 100, 'FFPPG'] += 3
 
     #fix duplicate player names
     dfs[1].loc[(dfs[1].Name == 'AdrianPeterson') & (dfs[1].Team != 'MIN'), 'Name'] = 'AdrianPeterson2'
