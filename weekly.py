@@ -89,9 +89,9 @@ def DK_salaries(filename, week=1):
 
 if __name__ == '__main__':
 	print('Updating Data...')
-	#game_by_game.save_all_stats(season=2015, week=18, scoring='DK')
+	game_by_game.save_all_stats(season=2015, week=18, scoring='FD')
 	print('Getting Salaries...')
 	#FD_salaries('salaries/FD/FanDuel-NFL-2015-10-04-13139-players-list.csv', week=4)
-	DK_salaries('salaries/DK/DKSalaries.csv', week=4)
+	#DK_salaries('salaries/DK/DKSalaries.csv', week=4)
 	print('Making Projections...')
-	weekly_pred(season=2015, week=4, scoring='DK')
+	#weekly_pred(season=2015, week=4, scoring='DK')
