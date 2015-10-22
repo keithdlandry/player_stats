@@ -38,6 +38,11 @@ def weekly_pred(season=2015, week=4, scoring='FD'):
 	#remove players by hand
 	proj_list[2].drop(['JordyNelson', 'JoshGordon'], inplace=True)
 
+	#show mean and std for last 2+ seasons
+	gbs = [df[df.Season > (season-3)].groupby('Name') for df in df_list]
+	for proj, gb in zip(proj_list, gbs):
+		proj = gb['FFPPG'].agg([np.mean, np.std]).join(proj.set_index(['Name']), how='right')
+
 	positions = ['QB', 'RB', 'WR', 'TE']
 	pos_salaries = []
 	for pos in positions:
@@ -45,7 +50,7 @@ def weekly_pred(season=2015, week=4, scoring='FD'):
 
 	week_table = []
 	for proj, sal in zip(proj_list, pos_salaries):
-		week_table.append(pd.merge(proj, sal, on='Name'))
+		week_table.append(pd.merge(proj, sal, on='Name', how='outer'))
 
 	for table in week_table:
 		table['DPP'] = table['Salary']/table['Projection']
