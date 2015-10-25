@@ -6,9 +6,9 @@ import sys
 import training_data
 import game_by_game
 
-def weekly_pred(season=2015, week=4, scoring='FD'):
+def weekly_pred(season=2015, week=18, scoring='FD'):
 	positions = ['qb', 'rb', 'wr', 'te']
-	df_list = [pd.read_csv('game_stats/'+ pos +'_game_stats.csv') for pos in positions]
+	df_list = [pd.read_csv('game_stats/' + scoring + '/' + pos +'_game_stats.csv') for pos in positions]
 	df_list = [df.drop(['Unnamed: 0'], axis = 1) for df in df_list]
 
 	tdata_list = [game_by_game.gbg_train_stats(df) for df in df_list]
@@ -95,9 +95,10 @@ def DK_salaries(filename, week=1):
 if __name__ == '__main__':
 	print('Updating Data...')
 	#game_by_game.save_all_stats(season=2015, week=18, scoring='FD')
+	#game_by_game.save_all_stats(season=2015, week=18, scoring='DK')
 	print('Getting Salaries...')
-	FD_salaries('salaries/FD/FanDuel-NFL-2015-10-11-13183-players-list.csv', week=5)
-	DK_salaries('salaries/DK/DKSalaries_w5.csv', week=5)
+	FD_salaries('salaries/FD/FanDuel-NFL-2015-10-25-13290-players-list.csv', week=7)
+	DK_salaries('salaries/DK/DKSalaries_w7.csv', week=7)
 	print('Making Projections...')
-	weekly_pred(season=2015, week=5, scoring='DK')
-	weekly_pred(season=2015, week=5, scoring='FD')
+	weekly_pred(season=2015, week=7, scoring='DK')
+	weekly_pred(season=2015, week=7, scoring='FD')
